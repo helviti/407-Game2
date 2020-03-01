@@ -9,65 +9,120 @@ namespace Game_2 {
         public static int lineMin = 0;
         public static int lineMax = 100;
 
+        public static int turnCounter = 0;
+
+        static int[] pos = {-1, -1, -1 };
+
+        static int?[] satVal = { null, null, null };
+
+        static string[] players = { "Ali", "Can", "Dilan" };
+
         public static SortedList<int, string> listOfElements = new SortedList<int, string> ();
 
         public static void Main (string[] args) {
-            int posA = -1;
-            int posB = -1;
-            int posC = -1;
-            int turnCounter = 0;
+            //Main game loop
+            while (true) {
+                Console.Clear ();
+                gameInit ();
+                Console.WriteLine ("Press any key to pass the turn to the next player. Press (ESC) to exit and start over. \n");
+                gameRun ();
+            }
 
+        }
+
+        public static void gameInit () {
+
+            Console.WriteLine ("Welcome to the optimal store value game!\n");
             //Initialization with user input
-            while (posA == -1) {
-                Console.WriteLine ("Enter the starting position of A:");
-                posA = takeInput ();
-                if (posA != -1 && keyDoesNotExist (posA)) {
-                    listOfElements.Add (posA, "A");
+            while (pos[0] == -1) {
+                Console.WriteLine ("Enter the starting position of {0}:", players[0]);
+                pos[0] = takeInput ();
+                if (pos[0] != -1 && keyDoesNotExist (pos[0])) {
+                    listOfElements.Add (pos[0], players[0]);
                     break;
                 } else {
                     Console.WriteLine ("Your input was incorrect. Choose between 0 and 100.");
-                    posA = -1;
+                    pos[0] = -1;
                 }
             }
-            while (posB == -1) {
-                Console.WriteLine ("\nEnter the starting position of B:");
-                posB = takeInput ();
-                if (posB != -1 && keyDoesNotExist (posB)) {
-                    listOfElements.Add (posB, "B");
+            while (pos[1] == -1) {
+                Console.WriteLine ("\nEnter the starting position of {0}:", players[1]);
+                pos[1] = takeInput ();
+                if (pos[1] != -1 && keyDoesNotExist (pos[1])) {
+                    listOfElements.Add (pos[1], players[1]);
                     break;
                 } else {
                     Console.WriteLine ("Your input was incorrect. Choose between 0 and 100.");
-                    posB = -1;
+                    pos[1] = -1;
                 }
             }
-            while (posC == -1) {
-                Console.WriteLine ("\nEnter the starting position of C:");
-                posC = takeInput ();
-                if (posC != -1 && keyDoesNotExist (posC)) {
-                    listOfElements.Add (posC, "C");
+            while (pos[2] == -1) {
+                Console.WriteLine ("\nEnter the starting position of {0}:", players[2]);
+                pos[2] = takeInput ();
+                if (pos[2] != -1 && keyDoesNotExist (pos[2])) {
+                    listOfElements.Add (pos[2], players[2]);
                     break;
                 } else {
                     Console.WriteLine ("Your input was incorrect. Choose between 0 and 100.");
-                    posC = -1;
+                    pos[2] = -1;
                 }
             }
 
+            Console.Clear ();
+
+            while (satVal[0] == null) {
+                Console.WriteLine ("\nEnter the saturation value of {0} if you want to limit the values, enter (0) otherwise.", players[0]);
+                var tempVal = takeInput ();
+                if (tempVal != -1) {
+                    satVal[0] = tempVal;
+                    break;
+                } else {
+                    Console.WriteLine ("Your input was incorrect. Choose between 0 and 100.");
+                    satVal[0] = null;
+                }
+            }
+            while (satVal[1] == null) {
+                Console.WriteLine ("\nEnter the saturation value of {0} if you want to limit the values, enter (0) otherwise.", players[1]);
+                var tempVal = takeInput ();
+                if (tempVal != -1) {
+                    satVal[1] = tempVal;
+                    break;
+                } else {
+                    Console.WriteLine ("Your input was incorrect. Choose between 0 and 100.");
+                    satVal[1] = null;
+                }
+            }
+            while (satVal[2] == null) {
+                Console.WriteLine ("\nEnter the saturation value of {0} if you want to limit the values, enter (0) otherwise.", players[2]);
+                var tempVal = takeInput ();
+                if (tempVal != -1) {
+                    satVal[2] = tempVal;
+                    break;
+                } else {
+                    Console.WriteLine ("Your input was incorrect. Choose between 0 and 100.");
+                    satVal[2] = null;
+                }
+            }
             Console.WriteLine ("\nAll configuration is done. Press any key to start.");
             Console.ReadKey ();
             Console.Clear ();
 
             Console.WriteLine ("\n\n");
 
-            //Main game logic
+        }
+
+        public static void gameRun () {
             while (true) {
                 turnCounter += 1;
 
+                Console.WriteLine (">  {0}: " + findKeyFromValue (players[0]) + " - {1}: " + findKeyFromValue (players[1]) + " - {2}: " + findKeyFromValue (players[2]), players[0], players[1], players[2]);
+
                 //A's turn
                 if (turnCounter % 3 == 1) {
-                    var tempVar = removeFromListAndReturn ("A");
+                    var tempVar = removeFromListAndReturn (players[0]);
                     int tempValue = tempVar.removedKey;
 
-                    listOfElements.Add (findMaxVal (tempValue), "A");
+                    listOfElements.Add (findMaxVal (tempValue), players[0]);
 
                     ;
 
@@ -75,26 +130,26 @@ namespace Game_2 {
 
                 //B's turn
                 if (turnCounter % 3 == 2) {
-                    var tempVar = removeFromListAndReturn ("B");
+                    var tempVar = removeFromListAndReturn (players[1]);
                     int tempValue = tempVar.removedKey;
 
-                    listOfElements.Add (findMaxVal (tempValue), "B");
+                    listOfElements.Add (findMaxVal (tempValue), players[1]);
                 }
-
+                
                 //C's turn
                 if (turnCounter % 3 == 0) {
-                    var tempVar = removeFromListAndReturn ("C");
+                    var tempVar = removeFromListAndReturn (players[2]);
                     int tempValue = tempVar.removedKey;
 
-                    listOfElements.Add (findMaxVal (tempValue), "C");
+                    listOfElements.Add (findMaxVal (tempValue), players[2]);
                 }
 
-                Console.WriteLine (">  A: " + findKeyFromValue ("A") + " - B: " + findKeyFromValue ("B") + " - C: " + findKeyFromValue ("C"));
-
-                Thread.Sleep (800);
-
+                // Thread.Sleep (800);
+                if (Console.ReadKey ().Key == ConsoleKey.Escape) {
+                    Console.WriteLine ("esc pressed");
+                    break;
+                }
             }
-
         }
 
         public static int takeInput () {
@@ -127,6 +182,14 @@ namespace Game_2 {
             float tempVal = -1;
 
             SortedList<int, int> valueList = new SortedList<int, int> ();
+
+            //Find whose turn it currently is
+            int turnIndex = (turnCounter-1)%3;
+
+
+
+
+
 
             for (int i = lineMin; i < lineMax; i++) {
 
@@ -177,6 +240,13 @@ namespace Game_2 {
             if (listMax < posInit) {
                 initVal = (lineMax - posInit) + (posInit - listMax) / 2;
             }
+
+
+            if (initVal>=satVal[turnIndex] && satVal[turnIndex]!=0){
+                return dummyInit;
+            }
+            
+
 
             if (checkedMaxValue > initVal) {
                 return checkedMaxValuePosition;
